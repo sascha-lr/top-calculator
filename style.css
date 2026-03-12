@@ -83,10 +83,19 @@ button {
     height: 3rem;
 }
 
+.small.display {
+  font-size: .75rem;
+  height: 2.5rem;
+}
+
 .button.container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: .5rem;
 }
 
-
+.logo {
+  height: 3rem;
+  aspect-ratio: 1/1;
+  background-color: purple;
+}
