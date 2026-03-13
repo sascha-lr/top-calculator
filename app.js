@@ -32,15 +32,52 @@ function checkIfNumber(input) {
     return input - input === 0;
 }
 
+function displayInput(number) {
+    if (checkIfNumber(number)) {
+        if (checkIfNumber(display.innerText)) {
+            display.innerText += number;                           
+        } else {
+            display.innerText = number;
+        }
+    } else {
+        if (!display.innerText.includes('.') && checkIfNumber(display.innerText)) display.innerText += number;
+    }
+}
+
+function calculate() {
+    if (num1 === undefined) {
+        num1 = +display.innerText;
+        smallDisplay.innerText = num1;
+        operate = operators[e.target.id];
+        operatorSymbol = e.target.innerText;
+        display.innerText = operatorSymbol;   
+    } else {
+        if (!checkIfNumber(display.innerText)) {
+            operate = operators[e.target.id];
+            operatorSymbol = e.target.innerText;
+            display.innerText = operatorSymbol;
+        } else {
+            num2 = +display.innerText;
+            if (result !== '' && result !== undefined) {
+                smallDisplay.innerText = `${result} ${operatorSymbol} ${num2} = `;
+                result = operate(result, num2);
+                smallDisplay.innerText += result;
+            } else {
+                result = operate(num1, num2);
+                smallDisplay.innerText = `${num1} ${operatorSymbol} ${num2} = ${result}`
+            }
+            operate = operators[e.target.id];
+            operatorSymbol = e.target.innerText;
+            display.innerText = operatorSymbol;
+        }
+    }
+}
+
 buttonContainer.addEventListener('click', (e) => {
-    if (result === undefined) softClear();
+    if (result === undefined)  softClear();
     switch (e.target.classList[0]) {
         case 'num-button':
-            if (display.innerText !== '.' && checkIfNumber(display.innerText)) {
-                display.innerText += e.target.innerText; 
-            } else {
-                display.innerText = e.target.innerText;
-            }
+            displayInput(e.target.innerText);
             break;
         case 'operator-button':
             if (num1 !== undefined) {
@@ -86,9 +123,6 @@ buttonContainer.addEventListener('click', (e) => {
             }
             display.innerText = result;
             softClear();
-            break;
-        case 'comma-button':
-            if (!display.innerText.includes('.') && checkIfNumber(display.innerText)) display.innerText += e.target.innerText;
             break;
         case 'clear-button':
             hardClear();
