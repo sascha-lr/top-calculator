@@ -14,6 +14,7 @@ let num2;
 let operate = () => {};
 let operatorSymbol = '';
 let result = '';
+let lastButtonPressWasEqual = false;
 
 function softClear() {
     num1 = undefined;
@@ -26,6 +27,7 @@ function hardClear() {
     softClear();
     display.innerText = '';
     smallDisplay.innerText = '';
+    lastButtonPressWasEqual = false;
 }
 
 function checkIfNumber(input) {
@@ -34,27 +36,32 @@ function checkIfNumber(input) {
 
 function displayInput(number) {
     if (checkIfNumber(number)) {
-        if (checkIfNumber(display.innerText)) {
+        if (!lastButtonPressWasEqual && (display.innerText === '.' || checkIfNumber(display.innerText))) {
             display.innerText += number;                           
         } else {
             display.innerText = number;
+            lastButtonPressWasEqual = false;
         }
     } else {
-        if (!display.innerText.includes('.') && checkIfNumber(display.innerText)) display.innerText += number;
+        if (!checkIfNumber(display.innerText)) {
+            display.innerText = number;
+        } else if (!display.innerText.includes('.')) {
+            display.innerText += number;           
+        } 
     }
 }
 
-function calculate() {
+function calculate(operator) {
     if (num1 === undefined) {
         num1 = +display.innerText;
         smallDisplay.innerText = num1;
-        operate = operators[e.target.id];
-        operatorSymbol = e.target.innerText;
+        operate = operators[operator.id];
+        operatorSymbol = operator.innerText;
         display.innerText = operatorSymbol;   
     } else {
         if (!checkIfNumber(display.innerText)) {
-            operate = operators[e.target.id];
-            operatorSymbol = e.target.innerText;
+            operate = operators[operator.id];
+            operatorSymbol = operator.innerText;
             display.innerText = operatorSymbol;
         } else {
             num2 = +display.innerText;
@@ -66,8 +73,8 @@ function calculate() {
                 result = operate(num1, num2);
                 smallDisplay.innerText = `${num1} ${operatorSymbol} ${num2} = ${result}`
             }
-            operate = operators[e.target.id];
-            operatorSymbol = e.target.innerText;
+            operate = operators[operator.id];
+            operatorSymbol = operator.innerText;
             display.innerText = operatorSymbol;
         }
     }
@@ -80,36 +87,7 @@ buttonContainer.addEventListener('click', (e) => {
             displayInput(e.target.innerText);
             break;
         case 'operator-button':
-            if (num1 !== undefined) {
-                if (!checkIfNumber(display.innerText)) {
-                    operate = operators[e.target.id];
-                    operatorSymbol = e.target.innerText;
-                    display.innerText = operatorSymbol;
-                    break;
-                }
-                num2 = +display.innerText;
-                if (result !== '' && result !== undefined) {
-                    smallDisplay.innerText = `${result} ${operatorSymbol} ${num2} = `;
-                    result = operate(result, num2);
-                    smallDisplay.innerText += result;
-                } else {
-                    result = operate(num1, num2);
-                    smallDisplay.innerText = `${num1} ${operatorSymbol} ${num2} = ${result}`
-                }
-                operate = operators[e.target.id];
-                operatorSymbol = e.target.innerText;
-                display.innerText = operatorSymbol;
-            } else {
-                if (!checkIfNumber(display.innerText)) {
-                    softClear();
-                    break;                   
-                }
-                num1 = +display.innerText;
-                smallDisplay.innerText = num1;
-                operate = operators[e.target.id];
-                operatorSymbol = e.target.innerText;
-                display.innerText = operatorSymbol; 
-            }
+            calculate(e.target);
             break;
         case 'equal-button':
             if (num1 === undefined) break;
@@ -122,6 +100,7 @@ buttonContainer.addEventListener('click', (e) => {
                 result = operate(num1, num2);
             }
             display.innerText = result;
+            lastButtonPressWasEqual = true;
             softClear();
             break;
         case 'clear-button':
