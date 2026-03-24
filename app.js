@@ -76,7 +76,7 @@ function calculate(operator) {
 }
 
 buttonContainer.addEventListener('click', (e) => {
-    if (result === undefined)  softClear();
+    if (result === undefined) softClear();
     switch (e.target.classList[0]) {
         case 'num-button':
             displayInput(e.target.innerText);
@@ -85,15 +85,11 @@ buttonContainer.addEventListener('click', (e) => {
             calculate(e.target);
             break;
         case 'equal-button':
-            if (num1 === undefined || !checkIfNumber(+display.innerText)) break;
+            if (num1 === undefined || !checkIfNumber(display.innerText)) break;
             num2 = +display.innerText;
-            if (result !== '') {
-                smallDisplay.innerText = `${result} ${operatorSymbol} ${num2} =`; 
-                result = operate(result, num2)
-            } else {
-                smallDisplay.innerText = `${num1} ${operatorSymbol} ${num2} =`; 
-                result = operate(num1, num2);
-            }
+            const correctNumber = result !== 0 && (result || num1) || 0;
+            result = operate(correctNumber, num2);
+            smallDisplay.innerText = `${correctNumber} ${operatorSymbol} ${num2} =`; 
             display.innerText = result;
             lastButtonPressWasEqual = true;
             softClear();
