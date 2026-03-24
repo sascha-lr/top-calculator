@@ -65,14 +65,9 @@ function calculate(operator) {
             display.innerText = operatorSymbol;
         } else {
             num2 = +display.innerText;
-            if (result !== '' && result !== undefined) {
-                smallDisplay.innerText = `${result} ${operatorSymbol} ${num2} = `;
-                result = operate(result, num2);
-                smallDisplay.innerText += result;
-            } else {
-                result = operate(num1, num2);
-                smallDisplay.innerText = `${num1} ${operatorSymbol} ${num2} = ${result}`
-            }
+            const correctNumber = result !== 0 && (result || num1) || 0;
+            result = operate(correctNumber, num2);
+            smallDisplay.innerText = `${correctNumber} ${operatorSymbol} ${num2} = ${result}`;
             operate = operators[operator.id];
             operatorSymbol = operator.innerText;
             display.innerText = operatorSymbol;
@@ -90,7 +85,7 @@ buttonContainer.addEventListener('click', (e) => {
             calculate(e.target);
             break;
         case 'equal-button':
-            if (num1 === undefined) break;
+            if (num1 === undefined || !checkIfNumber(+display.innerText)) break;
             num2 = +display.innerText;
             if (result !== '') {
                 smallDisplay.innerText = `${result} ${operatorSymbol} ${num2} =`; 
