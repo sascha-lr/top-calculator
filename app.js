@@ -2,10 +2,12 @@ const buttonContainer = document.querySelector('.button.container');
 const display = document.querySelector('.main.display');
 const smallDisplay = document.querySelector('.small.display');
 
+const errorMessage = 'ERROR';
+
 const operators = {
     'plus': (a, b) => a + b,
     'minus': (a, b) => a - b,
-    'divide': (a, b) => b!== 0 ? a / b : undefined,
+    'divide': (a, b) => b!== 0 ? a / b : errorMessage,
     'multiply': (a, b) => a * b
 }
 
@@ -31,7 +33,7 @@ function hardClear() {
 }
 
 function checkIfNumber(input) {
-    return input - input === 0;
+    return input !== '' ? input - input === 0 : false;
 }
 
 function displayInput(number) {
@@ -52,7 +54,7 @@ function displayInput(number) {
 }
 
 function calculate(operator) {
-    if (num1 === undefined) {
+    if (num1 === undefined && checkIfNumber(display.innerText)) {
         num1 = +display.innerText;
         smallDisplay.innerText = num1;
         operate = operators[operator.id];
@@ -76,7 +78,10 @@ function calculate(operator) {
 }
 
 buttonContainer.addEventListener('click', (e) => {
-    if (result === undefined) softClear();
+
+    if (result === errorMessage) softClear(); 
+    if (display.innerText === errorMessage || smallDisplay.innerText.includes(errorMessage)) hardClear();
+
     switch (e.target.classList[0]) {
         case 'num-button':
             displayInput(e.target.innerText);
@@ -97,5 +102,31 @@ buttonContainer.addEventListener('click', (e) => {
         case 'clear-button':
             hardClear();
             break;
+        case 'delete-button':
+            display.innerText = display.innerText.slice(0,-1);
+            break;
     }
 })
+
+// document.addEventListener('keydown', (e) => {
+//     let operator;
+// 
+//     if (checkIfNumber(e.key)) {
+//         displayInput(e.key);
+//     }
+//     switch (e.key) {
+//         case '+':
+//             operator = document.querySelector(#plus);
+//         case '-':
+//             operator = document.querySelector(#minus);
+//         case '*':
+//             operator = document.querySelector(#multiply);
+//         case '/':
+//             operator = document.querySelector(#divide);
+//         calculate(operator);
+//             break;
+//     
+//         default:
+//             break;
+//     }
+// })
