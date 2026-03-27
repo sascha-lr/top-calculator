@@ -53,10 +53,25 @@ h1, h2, h3, h4, h5, h6 {
   isolation: isolate;
 }
 
+:root {
+    --onyx: #0f0f0f;
+    --graphite: #2d2e2e;
+    --lilac: #bcabae;
+    --dim-grey: #716969;
+    --light: #fbfbfb;
+}
+
 body {
     display: grid;
     place-content: center;
     height: 100vh;
+    background-color: var(--onyx);
+    font-family: 'Inter', Helvetica;
+}
+
+button,
+p {
+    box-shadow: 10px 10px 25px 0px rgba(0,0,0,0.75);
 }
 
 button {
@@ -68,24 +83,27 @@ button {
 .calculator {
     display: flex;
     flex-direction: column;
-    border: solid red;
     border-radius: 1rem;
     padding: 1rem;
     gap: .5rem;
+    background-color: var(--graphite);
+    border: solid white;
 }
 
 .display {
     display: flex;
     justify-content: end;
     align-items: center;
-    border: solid red;
     padding: .5rem;
     height: 3rem;
+    background-color: var(--light);
+    border-radius: .35rem;
+    border: solid var(--lilac);
 }
 
 .small.display {
-  font-size: .75rem;
-  height: 2.5rem;
+    font-size: .75rem;
+    height: 2.5rem;
 }
 
 .button.container {
@@ -97,5 +115,30 @@ button {
 .logo {
   height: 3rem;
   aspect-ratio: 1/1;
-  background-color: purple;
 }
+
+button {
+    border: solid 1px var(--dim-grey);
+}
+
+.operator-button,
+.equal-button {
+    background-color: var(--lilac);
+    font-weight: 700;
+}
+
+.num-button {
+    background-color: var(--light);
+    border: solid 1px var(--lilac);
+}
+
+.special-button,
+.clear-button,
+.delete-button {
+    font-weight: 700;
+    color: white;
+    text-shadow: 1px 1px 1px black;
+    background-color: var(--dim-grey);
+    border: solid 1px var(--lilac);
+}
+
