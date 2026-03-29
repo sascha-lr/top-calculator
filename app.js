@@ -108,25 +108,3 @@ buttonContainer.addEventListener('click', (e) => {
     }
 })
 
-// document.addEventListener('keydown', (e) => {
-//     let operator;
-// 
-//     if (checkIfNumber(e.key)) {
-//         displayInput(e.key);
-//     }
-//     switch (e.key) {
-//         case '+':
-//             operator = document.querySelector(#plus);
-//         case '-':
-//             operator = document.querySelector(#minus);
-//         case '*':
-//             operator = document.querySelector(#multiply);
-//         case '/':
-//             operator = document.querySelector(#divide);
-//         calculate(operator);
-//             break;
-//     
-//         default:
-//             break;
-//     }
-// })
