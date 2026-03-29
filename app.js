@@ -5,10 +5,10 @@ const smallDisplay = document.querySelector('.small.display');
 const errorMessage = 'ERROR';
 
 const operators = {
-    'plus': (a, b) => a + b,
-    'minus': (a, b) => a - b,
-    'divide': (a, b) => b!== 0 ? a / b : errorMessage,
-    'multiply': (a, b) => a * b
+    '+': (a, b) => a + b,
+    '-': (a, b) => a - b,
+    '/': (a, b) => b!== 0 ? a / b : errorMessage,
+    '*': (a, b) => a * b
 }
 
 let num1;
@@ -45,36 +45,47 @@ function displayInput(number) {
             lastButtonPressWasEqual = false;
         }
     } else {
-        if (!checkIfNumber(display.innerText)) {
-            display.innerText = number;
-        } else if (!display.innerText.includes('.')) {
-            display.innerText += number;           
-        } 
+        if (!checkIfNumber(display.innerText)) display.innerText = number;
+        if (!display.innerText.includes('.')) display.innerText += number;           
     }
 }
 
-function calculate(operator) {
+function calculateIntermediary(operator) {
     if (num1 === undefined && checkIfNumber(display.innerText)) {
         num1 = +display.innerText;
         smallDisplay.innerText = num1;
-        operate = operators[operator.id];
-        operatorSymbol = operator.innerText;
-        display.innerText = operatorSymbol;   
+        operate = operators[operator.id || operator];
+        operatorSymbol = operator.innerText || document.getElementById(`${operator}`).innerText;
+        display.innerText = operatorSymbol;
     } else {
         if (!checkIfNumber(display.innerText)) {
-            operate = operators[operator.id];
-            operatorSymbol = operator.innerText;
+            operate = operators[operator.id || operator];
+            operatorSymbol = operator.innerText || document.getElementById(`${operator}`).innerText;
             display.innerText = operatorSymbol;
         } else {
             num2 = +display.innerText;
             const correctNumber = result !== 0 && (result || num1) || 0;
             result = operate(correctNumber, num2);
             smallDisplay.innerText = `${correctNumber} ${operatorSymbol} ${num2} = ${result}`;
-            operate = operators[operator.id];
-            operatorSymbol = operator.innerText;
+            operate = operators[operator.id || operator];
+            operatorSymbol = operator.innerText || document.getElementById(`${operator}`).innerText;
             display.innerText = operatorSymbol;
         }
     }
+}
+
+function calculateFinal() {
+    num2 = +display.innerText;
+    const correctNumber = result !== 0 && (result || num1) || 0;
+    result = operate(correctNumber, num2);
+    smallDisplay.innerText = `${correctNumber} ${operatorSymbol} ${num2} =`; 
+    display.innerText = result;
+    lastButtonPressWasEqual = true;
+    softClear();
+}
+
+function del() {
+    display.innerText = display.innerText.slice(0,-1);
 }
 
 buttonContainer.addEventListener('click', (e) => {
@@ -87,46 +98,36 @@ buttonContainer.addEventListener('click', (e) => {
             displayInput(e.target.innerText);
             break;
         case 'operator-button':
-            calculate(e.target);
+            calculateIntermediary(e.target);
             break;
         case 'equal-button':
             if (num1 === undefined || !checkIfNumber(display.innerText)) break;
-            num2 = +display.innerText;
-            const correctNumber = result !== 0 && (result || num1) || 0;
-            result = operate(correctNumber, num2);
-            smallDisplay.innerText = `${correctNumber} ${operatorSymbol} ${num2} =`; 
-            display.innerText = result;
-            lastButtonPressWasEqual = true;
-            softClear();
+            calculateFinal();
             break;
         case 'clear-button':
             hardClear();
             break;
         case 'delete-button':
-            display.innerText = display.innerText.slice(0,-1);
+            del();
             break;
     }
 })
 
-// document.addEventListener('keydown', (e) => {
-//     let operator;
-// 
-//     if (checkIfNumber(e.key)) {
-//         displayInput(e.key);
-//     }
-//     switch (e.key) {
-//         case '+':
-//             operator = document.querySelector(#plus);
-//         case '-':
-//             operator = document.querySelector(#minus);
-//         case '*':
-//             operator = document.querySelector(#multiply);
-//         case '/':
-//             operator = document.querySelector(#divide);
-//         calculate(operator);
-//             break;
-//     
-//         default:
-//             break;
-//     }
-// })
+document.addEventListener('keydown', (e) => {
+    if (checkIfNumber(e.key) || e.key === '.') displayInput(e.key);
+    switch (e.key) {
+        case '*':
+        case '-':
+        case '/':
+        case '+':
+            calculateIntermediary(e.key);
+            break;
+        case 'Enter':
+            if (num1 === undefined || !checkIfNumber(display.innerText)) break;
+            calculateFinal();
+            break;
+        case 'Backspace':
+            del();
+            break;
+    }
+})
