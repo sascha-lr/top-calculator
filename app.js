@@ -123,6 +123,7 @@ document.addEventListener('keydown', (e) => {
             calculateIntermediary(e.key);
             break;
         case 'Enter':
+        case '=':
             if (num1 === undefined || !checkIfNumber(display.innerText)) break;
             calculateFinal();
             break;
