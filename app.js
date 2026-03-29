@@ -36,17 +36,17 @@ function checkIfNumber(input) {
     return input !== '' ? input - input === 0 : false;
 }
 
-function displayInput(number) {
-    if (checkIfNumber(number)) {
+function displayInput(input) {
+    if (checkIfNumber(input) && display.innerText.length < 20) {
         if (!lastButtonPressWasEqual && (display.innerText === '.' || checkIfNumber(display.innerText))) {
-            display.innerText += number;                           
+            display.innerText += input;                           
         } else {
-            display.innerText = number;
+            display.innerText = input;
             lastButtonPressWasEqual = false;
         }
     } else {
-        if (!checkIfNumber(display.innerText)) display.innerText = number;
-        if (!display.innerText.includes('.')) display.innerText += number;           
+        if (!checkIfNumber(display.innerText)) display.innerText = input;
+        if (!display.innerText.includes('.') && display.innerText.length < 20) display.innerText += input;           
     }
 }
 
