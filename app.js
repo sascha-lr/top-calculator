@@ -11,25 +11,27 @@ const operators = {
     '*': (a, b) => a * b
 }
 
-let num1;
-let num2;
-let operate = () => {};
-let operatorSymbol = '';
-let result = '';
-let lastButtonPressWasEqual = false;
+const state = {
+    num1: undefined,
+    num2: undefined,
+    operate: () => {},
+    operatorSymbol: '',
+    result: '',
+    lastBtnPressEqual: false,
+}
 
 function softClear() {
-    num1 = undefined;
-    num2 = undefined;
-    operate = () => {};
-    result = '';
+    state.num1 = undefined;
+    state.num2 = undefined;
+    state.operate = () => {};
+    state.result = '';
 }
 
 function hardClear() {
     softClear();
     display.innerText = '';
     smallDisplay.innerText = '';
-    lastButtonPressWasEqual = false;
+    state.lastBtnPressEqual = false;
 }
 
 function checkIfNumber(input) {
@@ -38,11 +40,11 @@ function checkIfNumber(input) {
 
 function displayInput(input) {
     if (checkIfNumber(input) && display.innerText.length < 20) {
-        if (!lastButtonPressWasEqual && (display.innerText === '.' || checkIfNumber(display.innerText))) {
+        if (!state.lastBtnPressEqual && (display.innerText === '.' || checkIfNumber(display.innerText))) {
             display.innerText += input;                           
         } else {
             display.innerText = input;
-            lastButtonPressWasEqual = false;
+            state.lastBtnPressEqual = false;
         }
     } else {
         if (!checkIfNumber(display.innerText)) display.innerText = input;
@@ -50,47 +52,51 @@ function displayInput(input) {
     }
 }
 
-function calculateIntermediary(operator) {
-    if (num1 === undefined && checkIfNumber(display.innerText)) {
-        num1 = +display.innerText;
-        smallDisplay.innerText = num1;
-        operate = operators[operator.id || operator];
-        operatorSymbol = operator.innerText || document.getElementById(`${operator}`).innerText;
-        display.innerText = operatorSymbol;
+function setOperator(operator) {
+    state.operate = operators[operator.id || operator];
+    state.operatorSymbol = operator.innerText || document.getElementById(`${operator}`).innerText;
+    display.innerText = state.operatorSymbol;
+}
+
+function calculate() {
+    state.num2 = +display.innerText;
+    const correctNumber = state.result !== 0 && (state.result || state.num1) || 0;
+    state.result = state.operate(correctNumber, state.num2);
+    smallDisplay.innerText = `${correctNumber} ${state.operatorSymbol} ${state.num2} =`; 
+}
+
+function handleOperator(operator) {
+    if (state.num1 === undefined && checkIfNumber(display.innerText)) {
+        state.num1 = +display.innerText;
+        smallDisplay.innerText = state.num1;
+        setOperator(operator);
     } else {
         if (!checkIfNumber(display.innerText)) {
-            operate = operators[operator.id || operator];
-            operatorSymbol = operator.innerText || document.getElementById(`${operator}`).innerText;
-            display.innerText = operatorSymbol;
+            setOperator(operator);
         } else {
-            num2 = +display.innerText;
-            const correctNumber = result !== 0 && (result || num1) || 0;
-            result = operate(correctNumber, num2);
-            smallDisplay.innerText = `${correctNumber} ${operatorSymbol} ${num2} = ${result}`;
-            operate = operators[operator.id || operator];
-            operatorSymbol = operator.innerText || document.getElementById(`${operator}`).innerText;
-            display.innerText = operatorSymbol;
+            calculate();
+            smallDisplay.innerText += ` ${state.result}`;
+            setOperator(operator);
         }
     }
 }
 
-function calculateFinal() {
-    num2 = +display.innerText;
-    const correctNumber = result !== 0 && (result || num1) || 0;
-    result = operate(correctNumber, num2);
-    smallDisplay.innerText = `${correctNumber} ${operatorSymbol} ${num2} =`; 
-    display.innerText = result;
-    lastButtonPressWasEqual = true;
+function handleEquals() {
+    if (state.num1 === undefined || !checkIfNumber(display.innerText)) return;
+    calculate();
+    display.innerText = state.result;
+    state.lastBtnPressEqual = true;
     softClear();
 }
 
 function del() {
     display.innerText = display.innerText.slice(0,-1);
+    state.lastBtnPressEqual = false;
 }
 
 buttonContainer.addEventListener('click', (e) => {
 
-    if (result === errorMessage) softClear(); 
+    if (state.result === errorMessage) softClear(); 
     if (display.innerText === errorMessage || smallDisplay.innerText.includes(errorMessage)) hardClear();
 
     switch (e.target.classList[0]) {
@@ -98,11 +104,10 @@ buttonContainer.addEventListener('click', (e) => {
             displayInput(e.target.innerText);
             break;
         case 'operator-button':
-            calculateIntermediary(e.target);
+            handleOperator(e.target);
             break;
         case 'equal-button':
-            if (num1 === undefined || !checkIfNumber(display.innerText)) break;
-            calculateFinal();
+            handleEquals();
             break;
         case 'clear-button':
             hardClear();
@@ -120,12 +125,11 @@ document.addEventListener('keydown', (e) => {
         case '-':
         case '/':
         case '+':
-            calculateIntermediary(e.key);
+            handleOperator(e.key);
             break;
         case 'Enter':
         case '=':
-            if (num1 === undefined || !checkIfNumber(display.innerText)) break;
-            calculateFinal();
+            handleEquals();
             break;
         case 'Backspace':
             del();
