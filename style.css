@@ -67,6 +67,7 @@ body {
     height: 100vh;
     background-color: var(--onyx);
     font-family: 'Inter', Helvetica;
+    color: #000;
 }
 
 button,
