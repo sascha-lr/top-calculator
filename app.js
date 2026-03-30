@@ -134,5 +134,8 @@ document.addEventListener('keydown', (e) => {
         case 'Backspace':
             del();
             break;
+        case 'c':
+            hardClear();
+            break;
     }
 })
